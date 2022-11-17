@@ -57,3 +57,4 @@ st.write(dwImage.getInfo())
 #     # Perform dilation
 #     .focal_max(**{kernel: kernel, iterations: 2})
 Map.to_streamlit()
+st.title('Connected nature corridors in agricultural landscapes')
