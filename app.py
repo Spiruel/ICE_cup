@@ -32,22 +32,22 @@ imageId = s2Image.get('system:index')
 dw = ee.ImageCollection('GOOGLE/DYNAMICWORLD/V1')\
              .filter(ee.Filter.eq('system:index', imageId))
 dwImage = ee.Image(dw.first());
-st.write(dwImage)
+st.write(dwImage.getInfo())
 
-classification = dwImage.select('label')
-dwVisParams = {
-  'min': 0,
-  'max': 8,
-  'palette': [
-    '#419BDF', '#397D49', '#88B053', '#7A87C6', '#E49635', '#DFC35A',
-    '#C4281B', '#A59B8F', '#B39FE1'
-  ]
-}
+# classification = dwImage.select('label')
+# dwVisParams = {
+#   'min': 0,
+#   'max': 8,
+#   'palette': [
+#     '#419BDF', '#397D49', '#88B053', '#7A87C6', '#E49635', '#DFC35A',
+#     '#C4281B', '#A59B8F', '#B39FE1'
+#   ]
+# }
 
-Map.addLayer(classification, dwVisParams, 'Classified Image')
+# Map.addLayer(classification, dwVisParams, 'Classified Image')
 
-Map.addLayer(dwImage.select('crops'), dwVisParams, 'Cropland')
-Map.addLayer(dwImage.select('trees'), dwVisParams, 'Trees')
+# Map.addLayer(dwImage.select('crops'), dwVisParams, 'Cropland')
+# Map.addLayer(dwImage.select('trees'), dwVisParams, 'Trees')
 
 
 #img1.int16().connectedPixelCount(maxSize=100, eightConnected=True)
