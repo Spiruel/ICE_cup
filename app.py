@@ -11,9 +11,9 @@ Map = geemap.Map()
 Map.add_basemap('HYBRID')
 
 # #add sentinel 2 layers with date selector
-today = datetime.datetime.today()#.strftime('%Y-%m-%d')
+today = datetime.datetime.today()-datetime.timedelta(days=10)#.strftime('%Y-%m-%d')
 startDate = today#st.date_input('Date', value=today, min_value=datetime.datetime('2017-01-01'), max_value=today) #'2020-01-01'
-endDate = datetime.datetime.strftime(startDate+datetime.timedelta(days=5), '%Y-%m-%d')
+endDate = datetime.datetime.strftime(startDate, '%Y-%m-%d')
 
 s2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')\
              .filterDate(startDate, endDate)\
