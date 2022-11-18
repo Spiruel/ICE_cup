@@ -8,6 +8,7 @@ import datetime
 
 st.header('Connected nature corridors in agricultural landscapes')
 st.subheader('Let Nature do its thing')
+st.markdown('***Nicolas Lassalle, Joe Gallear, Samuel Bancroft***')
 st.write('Corridors of natural land cover are important for the conservation of biodiversity and ecosystem services. \
     However, the conservation of these corridors is often hampered by agricultural land use. \
     This app shows how natural corridors can be connected in agricultural landscapes.')
@@ -55,9 +56,9 @@ dwVisParams = {
 Map.addLayer(dwComposite.eq(4).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],'alpha':0.5}, 'Cropland Top-1')
 Map.addLayer(dwComposite.eq(1).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Top-1')
 
-kernel = ee.Kernel.circle(2)
-iterations = 2
-eroded_trees = dwComposite.eq(1).selfMask().focal_min(**{'kernel': kernel, 'iterations': 1}).focal_max(**{'kernel': kernel, 'iterations': 1})
+kernel = ee.Kernel.circle(1)
+iterations = 1
+eroded_trees = dwComposite.eq(1).selfMask().focal_min(**{'kernel': kernel, 'iterations': iterations}).focal_max(**{'kernel': kernel, 'iterations': iterations})
 Map.addLayer(eroded_trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Cleaned')
 
 # legend_keys = ['Cropland', 'Trees']
@@ -68,7 +69,7 @@ Map.addLayer(eroded_trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'
 
 if st.checkbox('View hedgerows in UK'):
     hedges = ee.FeatureCollection("users/spiruel/hedges_ss42")
-    Map.addLayer(hedges, {'color': 'red'}, 'Hedges')
+    Map.addLayer(hedges.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Hedges')
     Map.center_object(hedges, 12)
 
 # Map.addLayer(classification, dwVisParams, 'Classified Image')
