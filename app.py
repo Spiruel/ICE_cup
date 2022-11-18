@@ -101,24 +101,23 @@ elif choice == 'Field boundaries in Belgium':
     # st.info('Field boundaries is a work in progress, please check back later for updates.')
     Map.centerObject(geom, 9)
     fields = ee.FeatureCollection("users/spiruel/field_parcels_belgium").filterBounds(geom)
-    Map.addLayer(fields.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Hedges')
+    Map.addLayer(fields.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Fields')
     Map.center_object(fields, 12)
 
 
 if st.checkbox('Show distance to trees'):
     dist = trees\
     .distance(**{'kernel':ee.Kernel.euclidean(100), 'skipMasked':False})\
-    .clip(geom)\
     .rename('distance')
 
     imageVisParam = {"opacity":1,
                         "bands":["distance"],
                         "min":0,
-                        "max":15,
+                        "max":150,
                         "palette":["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}
 
     Map.addLayer(dist, imageVisParam, 'Distance to nearest trees')
-    Map.add_colorbar(vis_params={'palette': ["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}, vmin=0, vmax=15, caption='Cropland')
+    Map.add_colorbar(vis_params={'palette': ["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}, vmin=0, vmax=150, caption='Cropland')
 
 # dyn_world = Map.addLayer(classification, dwVisParams, 'Dynamic World all')
 # Map.addLayer(dw.select('crops').reduce(ee.Reducer.mode()).gte(0.25).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],}, 'Cropland')
