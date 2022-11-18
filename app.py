@@ -54,8 +54,9 @@ dwVisParams = {
   'shown': False
 }
 
+crops = dwComposite.eq(4).selfMask()
 trees = dwComposite.eq(1).selfMask()
-Map.addLayer(dwComposite.eq(4).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],'alpha':0.5}, 'Cropland Top-1')
+Map.addLayer(crops, {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],'alpha':0.5}, 'Cropland Top-1')
 Map.addLayer(trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Top-1')
 
 # kernel = ee.Kernel.circle(1)
@@ -116,7 +117,7 @@ if st.checkbox('Show distance to trees'):
                         "max":150,
                         "palette":["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}
 
-    Map.addLayer(dist, imageVisParam, 'Distance to nearest trees')
+    Map.addLayer(dist.updateMask(crops.mask()), imageVisParam, 'Distance to nearest trees (masked to cropland areas)')
     Map.add_colorbar(vis_params={'palette': ["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}, vmin=0, vmax=150, caption='Cropland')
 
 # dyn_world = Map.addLayer(classification, dwVisParams, 'Dynamic World all')
