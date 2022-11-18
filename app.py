@@ -50,16 +50,17 @@ dwVisParams = {
   'palette': [
     '#419BDF', '#397D49', '#88B053', '#7A87C6', '#E49635', '#DFC35A',
     '#C4281B', '#A59B8F', '#B39FE1'
-  ]
+  ],
+  'shown': False
 }
 
 Map.addLayer(dwComposite.eq(4).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],'alpha':0.5}, 'Cropland Top-1')
 Map.addLayer(dwComposite.eq(1).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Top-1')
 
-kernel = ee.Kernel.circle(1)
-iterations = 1
-eroded_trees = dwComposite.eq(1).selfMask().focal_min(**{'kernel': kernel, 'iterations': iterations}).focal_max(**{'kernel': kernel, 'iterations': iterations})
-Map.addLayer(eroded_trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Cleaned')
+# kernel = ee.Kernel.circle(1)
+# iterations = 1
+# eroded_trees = dwComposite.eq(1).selfMask().focal_min(**{'kernel': kernel, 'iterations': iterations*3}).focal_max(**{'kernel': kernel, 'iterations': iterations})
+# Map.addLayer(eroded_trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Cleaned')
 
 # legend_keys = ['Cropland', 'Trees']
 # legend_colors = ['#FFA500', '#00A600']
@@ -67,12 +68,35 @@ Map.addLayer(eroded_trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'
 #     legend_keys=legend_keys, legend_colors=legend_colors, position='bottomleft'
 # )
 
-if st.checkbox('View hedgerows in UK'):
+choice = st.radio(
+    'Choose a region to look at in more detail:',
+    ('Global exploration', 'Hedgerows in Cornwall', 'Field boundaries in Belgium')
+)
+
+if choice == 'Global exploration':
+    st.write('''Global exploration of the Dynamic World dataset, with tree cover and cropland highlighted.''')
+    Map.centerObject(ee.Geometry.Point([-0.5, 51.5]), 6)
+
+elif choice == 'Hedgerows in Cornwall':
+    st.write('''Hedges are a common feature of the agricultural landscape in the UK.
+    They are often used to separate fields and provide shelter for livestock.
+    They are also important for wildlife, providing habitat and corridors for movement.
+    This map shows the extent of hedgerows in Cornwall, UK, derived from aerial LIDAR data (https://doi.org/10.5285/4b5680d9-fdbc-40c0-96a1-4c022185303f).''')
+
     hedges = ee.FeatureCollection("users/spiruel/hedges_ss42")
     Map.addLayer(hedges.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Hedges')
     Map.center_object(hedges, 12)
+elif choice == 'Field boundaries in Belgium':
+    st.write('''An ideal deployment of this app would be to integrate natural corridor detection with field boundary detection.
+    Identifying which landowners are managing their field boundaries to provide corridors for wildlife would be a useful tool for conservationists
+    and allow for incentives to be delivered appropriately. Field parcel data: Landbouwgebruikspercelen 2020''')
 
-# Map.addLayer(classification, dwVisParams, 'Classified Image')
+    st.info('This is a work in progress, please check back later for updates.')
+    # fields = ee.FeatureCollection("users/spiruel/field_parcels_belgium")
+    # Map.addLayer(fields.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Hedges')
+    # Map.center_object(fields, 12)
+
+# dyn_world = Map.addLayer(classification, dwVisParams, 'Dynamic World all')
 # Map.addLayer(dw.select('crops').reduce(ee.Reducer.mode()).gte(0.25).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],}, 'Cropland')
 # Map.addLayer(dw.select('trees').reduce(ee.Reducer.mode()).gte(0.25).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],}, 'Trees')
 
