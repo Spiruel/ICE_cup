@@ -54,8 +54,9 @@ dwVisParams = {
   'shown': False
 }
 
+trees = dwComposite.eq(1).selfMask()
 Map.addLayer(dwComposite.eq(4).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],'alpha':0.5}, 'Cropland Top-1')
-Map.addLayer(dwComposite.eq(1).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Top-1')
+Map.addLayer(trees, {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],'alpha':0.5}, 'Trees Top-1')
 
 # kernel = ee.Kernel.circle(1)
 # iterations = 1
@@ -72,6 +73,12 @@ choice = st.radio(
     'Choose a region to look at in more detail:',
     ('Global exploration', 'Hedgerows in Cornwall', 'Field boundaries in Belgium')
 )
+
+geom = ee.Geometry.Polygon(
+        [[[4.53457469639464, 51.104878973751404],
+          [4.53457469639464, 50.94551350168057],
+          [5.040632435652452, 50.94551350168057],
+          [5.040632435652452, 51.104878973751404]]])
 
 if choice == 'Global exploration':
     st.write('''Global exploration of the Dynamic World dataset, with tree cover and cropland highlighted.''')
@@ -91,10 +98,27 @@ elif choice == 'Field boundaries in Belgium':
     Identifying which landowners are managing their field boundaries to provide corridors for wildlife would be a useful tool for conservationists
     and allow for incentives to be delivered appropriately. Field parcel data: Landbouwgebruikspercelen 2020''')
 
-    st.info('This is a work in progress, please check back later for updates.')
-    # fields = ee.FeatureCollection("users/spiruel/field_parcels_belgium")
-    # Map.addLayer(fields.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Hedges')
-    # Map.center_object(fields, 12)
+    # st.info('Field boundaries is a work in progress, please check back later for updates.')
+    Map.centerObject(geom, 9)
+    fields = ee.FeatureCollection("users/spiruel/field_parcels_belgium").filterBounds(geom)
+    Map.addLayer(fields.draw(**{'color': 'red', 'strokeWidth': 2}), {}, 'Hedges')
+    Map.center_object(fields, 12)
+
+
+if st.checkbox('Show distance to trees'):
+    dist = trees\
+    .distance(**{'kernel':ee.Kernel.euclidean(100), 'skipMasked':False})\
+    .clip(geom)\
+    .rename('distance')
+
+    imageVisParam = {"opacity":1,
+                        "bands":["distance"],
+                        "min":0,
+                        "max":15,
+                        "palette":["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}
+
+    Map.addLayer(dist, imageVisParam, 'Distance to nearest trees')
+    Map.add_colorbar(vis_params={'palette': ["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}, vmin=0, vmax=15, caption='Cropland')
 
 # dyn_world = Map.addLayer(classification, dwVisParams, 'Dynamic World all')
 # Map.addLayer(dw.select('crops').reduce(ee.Reducer.mode()).gte(0.25).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],}, 'Cropland')
