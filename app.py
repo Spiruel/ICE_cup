@@ -14,7 +14,7 @@ Map.add_basemap('HYBRID')
 # #add sentinel 2 layers with date selector
 startDate = st.date_input('Date', value=datetime.datetime(2022,4,1))
 #, min_value=datetime.datetime('2017-01-01'), max_value=today) #'2020-01-01'
-endDate = startDate+datetime.timedelta(days=10)
+endDate = startDate+datetime.timedelta(days=5)
 
 s2 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')\
              .filterDate(startDate.strftime('%Y-%m-%d'), endDate.strftime('%Y-%m-%d'))\
@@ -31,11 +31,14 @@ s2Image = ee.Image(s2.first())
 imageId = s2Image.get('system:index')
 
 dw = ee.ImageCollection('GOOGLE/DYNAMICWORLD/V1')\
-             .filter(ee.Filter.eq('system:index', imageId))
-dwImage = ee.Image(dw.first());
-st.write(dwImage.getInfo())
+    .filterDate(startDate.strftime('%Y-%m-%d'), endDate.strftime('%Y-%m-%d'))\
+            #  .filter(ee.Filter.eq('system:index', imageId))
+# dwImage = ee.Image(dw.first());
 
-classification = dwImage.select('label')
+classification = dw.select('label')
+dwComposite = classification.reduce(ee.Reducer.mode())
+
+classification = dwComposite
 dwVisParams = {
   'min': 0,
   'max': 8,
@@ -46,7 +49,7 @@ dwVisParams = {
 }
 
 Map.addLayer(classification, dwVisParams, 'Classified Image')
-
+Map.centerObject(classification)
 # Map.addLayer(dwImage.select('crops'), dwVisParams, 'Cropland')
 # Map.addLayer(dwImage.select('trees'), dwVisParams, 'Trees')
 
