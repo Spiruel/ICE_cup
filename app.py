@@ -31,7 +31,7 @@ s2Image = ee.Image(s2.first())
 imageId = s2Image.get('system:index')
 
 dw = ee.ImageCollection('GOOGLE/DYNAMICWORLD/V1')\
-    .filterDate(startDate.strftime('%Y-%m-%d'), endDate.strftime('%Y-%m-%d'))\
+    .filterDate('2021-01-01', '2021-04-30')\
             #  .filter(ee.Filter.eq('system:index', imageId))
 # dwImage = ee.Image(dw.first());
 
@@ -50,9 +50,12 @@ dwVisParams = {
 
 Map.addLayer(classification, dwVisParams, 'Classified Image')
 Map.centerObject(classification)
-# Map.addLayer(dwImage.select('crops'), dwVisParams, 'Cropland')
-# Map.addLayer(dwImage.select('trees'), dwVisParams, 'Trees')
+Map.addLayer(dw.select('crops').reduce(ee.Reducer.mode()), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],}, 'Cropland')
+Map.addLayer(dw.select('trees').reduce(ee.Reducer.mode()), {'min': 0, 'max': 1, 'palette': ['F2F2F2','00A600'],}, 'Trees')
 
+#Map.addLayer(dw.select('crops'), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],},'Cropland', True)
+Map.add_colorbar(vis_params={'palette': ['F2F2F2','FFA500']}, vmin=0, vmax=1, caption='Cropland')
+Map.add_colorbar(vis_params={'palette': ['F2F2F2','00A600']}, vmin=0, vmax=1, caption='Trees')
 
 #img1.int16().connectedPixelCount(maxSize=100, eightConnected=True)
 # image
