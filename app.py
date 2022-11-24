@@ -1,7 +1,7 @@
 import streamlit as st
 
 import ee
-ee.Initialize()
+#ee.Initialize()
 
 import geemap.foliumap as geemap
 import datetime
