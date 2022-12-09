@@ -125,7 +125,7 @@ if st.checkbox('Show distance to trees'):
     
     if st.checkbox('Threshold distance layer with a maximum distance value'):
         cutoff = st.columns(2)[0].slider('Maximum distance from trees',0,100)
-        Map.addLayer(dist.updateMask(dist.lte(cutoff)), {}, 'Maximum of {cutoff:0f} m to nearest trees', crs, scale)
+        Map.addLayer(dist.updateMask(dist.lte(cutoff)), {'palette': ['red','green']}, f'Maximum of {cutoff:0f} m to nearest trees', crs, scale)
 
 # dyn_world = Map.addLayer(classification, dwVisParams, 'Dynamic World all')
 # Map.addLayer(dw.select('crops').reduce(ee.Reducer.mode()).gte(0.25).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],}, 'Cropland')
