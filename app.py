@@ -117,8 +117,15 @@ if st.checkbox('Show distance to trees'):
                         "max":150,
                         "palette":["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}
 
-    Map.addLayer(dist.updateMask(crops.mask()), imageVisParam, 'Distance to nearest trees (masked to cropland areas)')
+    # Set the projection and scale for the distance image
+    crs = 'EPSG:3857';
+    scale = 20;
+    Map.addLayer(dist.updateMask(crops.mask()), imageVisParam, 'Distance to nearest trees (masked to cropland areas)', crs, scale)
     Map.add_colorbar(vis_params={'palette': ["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}, vmin=0, vmax=150, caption='Cropland')
+    
+    if st.checkbox('Threshold distance layer with a maximum distance value')
+        cutoff = st.columns(2)[0].slider('Maximum distance from trees',0,100)
+        Map.addLayer(dist.updateMask(dist.lte(cutoff)), {}, 'Maximum of {cutoff:0f} m to nearest trees', crs, scale)
 
 # dyn_world = Map.addLayer(classification, dwVisParams, 'Dynamic World all')
 # Map.addLayer(dw.select('crops').reduce(ee.Reducer.mode()).gte(0.25).selfMask(), {'min': 0, 'max': 1, 'palette': ['F2F2F2','FFA500'],}, 'Cropland')
