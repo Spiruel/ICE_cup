@@ -123,7 +123,7 @@ if st.checkbox('Show distance to trees'):
     Map.addLayer(dist.updateMask(crops.mask()), imageVisParam, 'Distance to nearest trees (masked to cropland areas)', crs, scale)
     Map.add_colorbar(vis_params={'palette': ["22ff20","1a35ff","ffa925","ff0a36","2fe1ff","fd4bff"]}, vmin=0, vmax=150, caption='Cropland')
     
-    if st.checkbox('Threshold distance layer with a maximum distance value')
+    if st.checkbox('Threshold distance layer with a maximum distance value'):
         cutoff = st.columns(2)[0].slider('Maximum distance from trees',0,100)
         Map.addLayer(dist.updateMask(dist.lte(cutoff)), {}, 'Maximum of {cutoff:0f} m to nearest trees', crs, scale)
 
