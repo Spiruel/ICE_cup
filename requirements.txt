@@ -1,5 +1,5 @@
-streamlit
-streamlit-folium
-geemap==0.18.0
-leafmap
-click==8
+streamlit==1.7.0
+streamlit-folium==0.4.0
+geemap==0.17.0
+leafmap==0.7.1
+click==8.0.4
